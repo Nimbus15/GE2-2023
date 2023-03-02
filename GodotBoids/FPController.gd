@@ -18,12 +18,14 @@ func _input(event):
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
+	# Input.set_mouse_mode(Input.MOUSE_MODE_CAPTURED)
 	pass # Replace with function body.
 
 
 # Called every frame. 'delta' is the elapsed time since the previous frame.
 func _process(delta):
+	
+	look_at($"../../creature/boid".global_transform.origin, Vector3.UP)
 	var turn = Input.get_axis("turn_left", "turn_right")
 	DebugDraw.set_text("turn: ", str(turn))
 	
@@ -36,6 +38,10 @@ func _process(delta):
 	var move = Input.get_axis("move_forward", "move_back")
 	DebugDraw.set_text("move: ", str(move))
 
-	
 	if abs(move) > 0:     
 		global_translate(global_transform.basis.z * speed * move)
+
+	var upanddown = Input.get_axis("move_up", "move_down")
+	DebugDraw.set_text("upanddown: ", str(upanddown))
+	if abs(upanddown) > 0:     
+		global_translate(- global_transform.basis.y * speed * upanddown)
