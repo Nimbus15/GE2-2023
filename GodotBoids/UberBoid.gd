@@ -7,7 +7,7 @@ export var velocity = Vector3.ZERO
 export var speed:float
 export(float) var max_speed = 10.0
 
-export var behaviors = [] 
+var behaviors = [] 
 export var max_force = 10
 export var banking = 0.1
 export var damping = 0.1
@@ -16,6 +16,7 @@ func print_basis():
 	DebugDraw.draw_line(transform.origin,  transform.origin + transform.basis.z * 10.0 , Color(0, 0, 1))
 	DebugDraw.draw_line(transform.origin,  transform.origin + transform.basis.x * 10.0 , Color(1, 0, 0))
 	DebugDraw.draw_line(transform.origin,  transform.origin + transform.basis.y * 10.0 , Color(0, 1, 0))
+	DebugDraw.draw_line(transform.origin,  transform.origin + force * 10.0 , Color(1, 1, 0))
 	DebugDraw.set_text("transform.origin: ", transform.origin)
 	DebugDraw.set_text("translation: ", translation)
 	DebugDraw.set_text("rotation: ", rotation)
@@ -29,12 +30,18 @@ func print_basis():
 	DebugDraw.set_text("Vector3.UP: ", Vector3.UP)
 	DebugDraw.set_text("Vector3.DOWN: ", Vector3.DOWN)
 
-
-
 func seek_force(target: Vector3):	
 	var toTarget = target - transform.origin
 	toTarget = toTarget.normalized()
 	var desired = toTarget * max_speed
+	return desired - velocity
+	
+func arrive_force(target:Vector3, slowingDistance:float):
+	var toTarget = target - transform.origin
+	var dist = toTarget.length()
+	var ramped = (dist / slowingDistance) * max_speed
+	var clamped = min(max_speed, ramped)
+	var desired = (toTarget * clamped) / dist 
 	return desired - velocity
 
 # Called when the node enters the scene tree for the first time.
