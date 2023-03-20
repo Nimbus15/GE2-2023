@@ -13,27 +13,38 @@ export var axis = Axis.Horizontal
 
 export var weight = 1.0
 
-export var draw_gizmos = true
+export var drawGizmos = true
 
 var boid
 var target:Vector3
 var worldTarget:Vector3
+
+# Instantiate
+var noise:OpenSimplexNoise = OpenSimplexNoise.new()
+
+# Configure
+
 	
 
 func _ready():
 	boid = get_parent()
+	noise.seed = randi()
+	noise.octaves = 4
+	noise.period = 20.0
+	noise.persistence = 0.8
 	
 func _process(delta):
-	if draw_gizmos:
+	if drawGizmos:
 		var cent = boid.global_transform.xform(Vector3.BACK * distance)
 		DebugDraw.draw_sphere(cent, radius, Color.deeppink)
 		DebugDraw.draw_line(boid.global_transform.origin, cent, Color.deeppink)
 		DebugDraw.draw_line(cent, worldTarget, Color.blueviolet)
 	
 		DebugDraw.draw_sphere(worldTarget, 1)	
-		
+
 func calculate():		
-	var n  = sin(theta)
+	var n  = noise.get_noise_1d(theta)
+	DebugDraw.set_text("Noise: " + str(n))
 	var angle = deg2rad(n * amplitude)
 	
 	var delta = get_process_delta_time()
@@ -44,10 +55,8 @@ func calculate():
 	if axis == Axis.Horizontal:
 		target.x = sin(angle)
 		target.z =  cos(angle)
-		target.y = 0
 		rot.z = 0
 	else:
-		target.x = 0
 		target.y = sin(angle)
 		target.z = cos(angle)
 	
@@ -59,7 +68,5 @@ func calculate():
 	
 	worldTarget = boid.global_transform.origin + (projected * localtarget)	
 	theta += frequency * delta * PI * 2.0
-	
-	var f = boid.seek_force(worldTarget)  
 
-	return f
+	return boid.seek_force(worldTarget)

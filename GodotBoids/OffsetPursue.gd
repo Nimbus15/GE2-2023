@@ -15,22 +15,18 @@ var projected:Vector3
 func _ready():
 	boid = get_parent()
 	leaderBoid = get_node(leaderNodePath)
-	leaderOffset = leaderBoid.transform.basis.xform_inv(boid.transform.origin)
+	leaderOffset = boid.global_transform.origin - leaderBoid.global_transform.origin
+	leaderOffset = leaderBoid.global_transform.basis.xform_inv(leaderOffset)
 	
 func _process(delta):
 	if drawGizmos:
-		DebugDraw.draw_sphere(worldTarget, 1, Color.aliceblue)
-		DebugDraw.draw_box(projected, Vector3.ONE, Color.aliceblue)			
+		DebugDraw.draw_line(projected, worldTarget, Color.aliceblue)			
 
 func calculate():		
-	worldTarget = leaderBoid.transform.basis.xform(leaderOffset)
-	var dist = boid.transform.origin.distance_to(worldTarget)
+	worldTarget = leaderBoid.global_transform.xform(leaderOffset)
+	var dist = boid.global_transform.origin.distance_to(worldTarget)
 	var time = dist / boid.max_speed
-	
 	projected = worldTarget + leaderBoid.velocity * time
 	
-	# DebugDraw.draw_sphere(projected, 1, Color.red)
-	
-	# return arrive(projected)
 
-	return boid.seek_force(projected)
+	return boid.arrive_force(projected, 5)
