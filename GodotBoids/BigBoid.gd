@@ -96,7 +96,7 @@ func _ready():
 	var screen_size = OS.get_screen_size()
 	var window_size = OS.get_window_size()
 	
-	OS.set_window_position(screen_size*0.5 - window_size*0.5)
+	# OS.set_window_position(screen_size*0.5 - window_size*0.5)
 
 	if targetNodePath:	
 		targetNode = get_node(targetNodePath)
@@ -200,14 +200,5 @@ func _physics_process(var delta):
 		#  look_at(global_transform.origin - velocity, tempUp)
 	if drawGizmos:
 		drawGizmos()	
-		
-static func random_point_in_unit_sphere() -> Vector3:
-	var theta = rand_range(0, 2 * PI)
-	var phi = rand_range(0, PI)
-	var r = pow(rand_range(0, 1), 1.0/3.0)  # Cube root for uniform distribution
-
-	var x = r * sin(phi) * cos(theta)
-	var y = r * sin(phi) * sin(theta)
-	var z = r * cos(phi)
-	return Vector3(x, y, z)
+	
 		

@@ -43,7 +43,7 @@ func arrive_force(target:Vector3, slowingDistance:float):
 	var dist = toTarget.length()
 	
 	if dist == 0:
-		return Vector3.ZERO;
+		return Vector3.ZERO
 	
 	var ramped = (dist / slowingDistance) * max_speed
 	var clamped = min(max_speed, ramped)
@@ -56,23 +56,25 @@ func _ready():
 		var child = get_child(i)
 		if child.has_method("calculate"):
 			behaviors.push_back(child)
-	var screen_size = OS.get_screen_size()
-	var window_size = OS.get_window_size()
+			child.set_process(child.enabled) 
+	# enable_all(false)
 	
-	OS.set_window_position(screen_size*0.5 - window_size*0.5)
+func enable_all(enabled):
+	for i in behaviors.size():
+		behaviors[i].enabled = enabled
 
 func calculate():	
-	# 
 	force = Vector3.ZERO
 	for i in behaviors.size():
-		var f = behaviors[i].calculate();
-		if is_nan(f.x) or is_nan(f.y) or is_nan(f.z):
-			print(behaviors[i] + " is NAN")
-			f = Vector3.ZERO
-		force += f * behaviors[i].weight
-		if force.length() > max_force:
-			force = force.limit_length(max_force)
-			break
+		if behaviors[i].enabled:
+			var f = behaviors[i].calculate()
+			if is_nan(f.x) or is_nan(f.y) or is_nan(f.z):
+				print(behaviors[i] + " is NAN")
+				f = Vector3.ZERO
+			force += f * behaviors[i].weight
+			if force.length() > max_force:
+				force = force.limit_length(max_force)
+				break
 	return force
 
 func _process(var delta):
@@ -80,12 +82,16 @@ func _process(var delta):
 		draw_gizmos()
 		
 func _physics_process(var delta):
-	force = calculate()
+	# lerp in the new forces
+	force = lerp(force, calculate(), delta)
 	acceleration = force / mass
 	velocity += acceleration * delta
 	speed = velocity.length()
-	if speed > 0:
+	if speed > 0:		
 		velocity = velocity.limit_length(max_speed)
+		
+		# Damping
+		velocity -= velocity * delta * damping
 		
 		move_and_slide(velocity)
 		

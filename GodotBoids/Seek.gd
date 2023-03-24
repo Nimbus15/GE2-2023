@@ -1,23 +1,23 @@
-extends Node
+extends SteeringBehavior
 
-export var targetNodePath:NodePath
-var targetNode
-var worldTarget:Vector3
 
-export var weight = 1.0
-var boid
+# Declare member variables here. Examples:
+# var a = 2
+# var b = "text"
 
-func calculate():
-	worldTarget = targetNode.global_transform.origin
-	return boid.seek_force(worldTarget)
+export var target_node:NodePath
+onready var target = get_node(target_node)
 
+func draw_gizmos():
+	DebugDraw.draw_arrow_line(boid.global_transform.origin, target.global_transform.origin)
+	
+
+func calculate():	
+	return boid.seek_force(target.global_transform.origin)
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
 	boid = get_parent()
-	targetNode = get_node(targetNodePath)
+	pass # Replace with function body.
 
 
-# Called every frame. 'delta' is the elapsed time since the previous frame.
-func _process(delta):
-	pass

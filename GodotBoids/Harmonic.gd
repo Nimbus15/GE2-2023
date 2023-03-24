@@ -1,4 +1,4 @@
-extends Node
+extends SteeringBehavior
 
 export var frequency = 0.3
 export var radius = 10.0
@@ -8,27 +8,19 @@ export var amplitude = 80
 export var distance = 5
 
 enum Axis { Horizontal, Vertical}
-
 export var axis = Axis.Horizontal
-
-export var weight = 1.0
-
-export var draw_gizmos = true
-
-var boid
 var target:Vector3
 var worldTarget:Vector3
 	
-
 func _ready():
 	boid = get_parent()
 	
 func _process(delta):
 	if draw_gizmos:
 		var cent = boid.global_transform.xform(Vector3.BACK * distance)
-		DebugDraw.draw_sphere(cent, radius, Color.deeppink)
-		DebugDraw.draw_line(boid.global_transform.origin, cent, Color.deeppink)
-		DebugDraw.draw_line(cent, worldTarget, Color.blueviolet)
+		DebugDraw.draw_sphere(cent, radius, Color.aqua)
+		DebugDraw.draw_line(boid.global_transform.origin, cent, Color.aqua)
+		DebugDraw.draw_line(cent, worldTarget, Color.aqua)
 	
 		DebugDraw.draw_sphere(worldTarget, 1)	
 		
