@@ -15,10 +15,11 @@ export var damping = 0.1
 export var draw_gizmos = true
 
 func draw_gizmos():
-	DebugDraw.draw_line(transform.origin,  transform.origin + transform.basis.z * 10.0 , Color(0, 0, 1))
-	DebugDraw.draw_line(transform.origin,  transform.origin + transform.basis.x * 10.0 , Color(1, 0, 0))
-	DebugDraw.draw_line(transform.origin,  transform.origin + transform.basis.y * 10.0 , Color(0, 1, 0))
-	DebugDraw.draw_line(transform.origin,  transform.origin + force * 10.0 , Color(1, 1, 0))
+	DebugDraw.draw_arrow_line(transform.origin,  transform.origin + transform.basis.z * 10.0 , Color(0, 0, 1), 0.1)
+	DebugDraw.draw_arrow_line(transform.origin,  transform.origin + transform.basis.x * 10.0 , Color(1, 0, 0), 0.1)
+	DebugDraw.draw_arrow_line(transform.origin,  transform.origin + transform.basis.y * 10.0 , Color(0, 1, 0), 0.1)
+	DebugDraw.draw_arrow_line(transform.origin,  transform.origin + force , Color(1, 1, 0), 0.1)
+	DebugDraw.set_text("Force mag", force.length())
 	# set_text("transform.origin", transform.origin)
 	# DebugDraw.set_text("translation", translation)
 	# DebugDraw.set_text("rotation", rotation)
@@ -64,18 +65,23 @@ func enable_all(enabled):
 		behaviors[i].enabled = enabled
 
 func calculate():	
-	force = Vector3.ZERO
+	var force_acc = Vector3.ZERO
+	var behaviors_active = ""
 	for i in behaviors.size():
 		if behaviors[i].enabled:
-			var f = behaviors[i].calculate()
+			var f = behaviors[i].calculate() * behaviors[i].weight
 			if is_nan(f.x) or is_nan(f.y) or is_nan(f.z):
 				print(behaviors[i] + " is NAN")
 				f = Vector3.ZERO
-			force += f * behaviors[i].weight
-			if force.length() > max_force:
-				force = force.limit_length(max_force)
+			behaviors_active += behaviors[i].name + ": " + str(round(f.length())) + " "
+			force_acc += f 
+			if force_acc.length() > max_force:
+				force_acc = force_acc.limit_length(max_force)
+				behaviors_active += " Limiting force"
 				break
-	return force
+	DebugDraw.set_text(behaviors_active)
+	DebugDraw.set_text(str(force_acc.length()))
+	return force_acc
 
 func _process(var delta):
 	if draw_gizmos:
@@ -97,5 +103,5 @@ func _physics_process(var delta):
 		
 		# Implement Banking as described:
 		# https://www.cs.toronto.edu/~dt/siggraph97-course/cwr87/
-		var tempUp = transform.basis.y.linear_interpolate(Vector3.UP + (acceleration * banking), delta * 5.0)
-		look_at(global_transform.origin - velocity, Vector3.UP)
+		var temp_up = global_transform.basis.y.linear_interpolate(Vector3.UP + (acceleration * banking), delta * 5.0)
+		look_at(global_transform.origin - velocity, temp_up)
