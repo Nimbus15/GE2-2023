@@ -14,11 +14,11 @@ onready var boid = get_node(boid_path)
 
 enum Mode { Free, Follow, Boid}
 
-export var mode = Mode.Free
+export var mode = Mode.Follow
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	camera.move = true
+	camera.move = false
 	pass # Replace with function body.
 	
 func _input(event):
@@ -39,7 +39,7 @@ func _physics_process(delta):
 		Mode.Follow:	
 			camera.global_transform.origin = lerp(camera.global_transform.origin, boid_camera.global_transform.origin, delta * 5.0)
 			var desired = camera.global_transform.looking_at(boid.global_transform.origin, Vector3.UP)		
-			camera.global_transform.basis = camera.global_transform.basis.slerp(desired.basis, delta).orthonormalized()
+			camera.global_transform.basis = camera.global_transform.basis.slerp(desired.basis, delta * 2).orthonormalized()
 		Mode.Boid:
 			camera.global_transform.origin = lerp(camera.global_transform.origin, boid.global_transform.origin, delta * 5.0)
 			var desired = camera.global_transform.looking_at(boid.global_transform.origin + boid.global_transform.basis.z , Vector3.UP)
