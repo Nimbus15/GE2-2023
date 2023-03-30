@@ -66,21 +66,19 @@ script = ExtResource( 6 )
 [node name="creature" parent="." instance=ExtResource( 11 )]
 
 [node name="boid" parent="creature" index="1"]
-max_force = 100
 banking = 0.1
 draw_gizmos = false
-
-[node name="MeshInstance5" parent="creature/boid" index="1"]
-transform = Transform( 1, 0, 0, 0, -8.74228e-08, -1, 0, 2, -4.37114e-08, 0, 0, 0 )
 
 [node name="CollisionShape" parent="creature/boid" index="2"]
 transform = Transform( 1, 0, 0, 0, 2, 0, 0, 0, 1, 0, 0, 0 )
 
 [node name="Avoidance" parent="creature/boid" index="3"]
-weight = 5.0
+weight = 0.0
+direction = 1
 updates_per_second = 60
 
 [node name="Harmonic" parent="creature/boid" index="4"]
+weight = 0.0
 frequency = 0.3
 distance = 15
 axis = 0
@@ -88,6 +86,9 @@ axis = 0
 [node name="Constrain" parent="creature/boid" index="5"]
 weight = 1.0
 center_path = NodePath("../../../Center")
+
+[node name="NoiseWander" parent="creature/boid" index="6"]
+draw_gizmos = true
 
 [node name="PathFollow" parent="creature/boid" index="7"]
 draw_gizmos = true
