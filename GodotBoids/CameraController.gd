@@ -14,11 +14,11 @@ onready var boid = get_node(boid_path)
 
 enum Mode { Free, Follow, Boid}
 
-export var mode = Mode.Follow
+export var mode = Mode.Free
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	camera.move = false
+	camera.move = true
 	pass # Replace with function body.
 	
 func _input(event):
@@ -27,13 +27,23 @@ func _input(event):
 			Mode.Free:
 				camera.move = false
 				mode = Mode.Follow
+				boid_camera.transform.origin = camera.transform.origin
+				boid_camera.get_node("OffsetPursue").calculate_offset()
 			Mode.Follow:
-				camera.move = false
-				mode = Mode.Boid
-			Mode.Boid:
 				camera.move = true
 				mode = Mode.Free
 
+	if event is InputEventKey and event.scancode == KEY_B and event.pressed:
+		match mode:
+			Mode.Follow, Mode.Free:
+				camera.move = false
+				boid.get_node("MeshInstance").set_visible(false)
+				mode = Mode.Boid
+			Mode.Boid:
+				boid.get_node("MeshInstance").set_visible(true)				
+				camera.move = true
+				mode = Mode.Free
+						
 func _physics_process(delta):
 	match mode:
 		Mode.Follow:	

@@ -31,7 +31,7 @@ func _physics_process(delta):
 		
 		var wantedPos = prev.global_transform.xform(offsets[i])
 		
-		# Clamp it, so they dont get too far apart
+		# Clamp it, cthey dont get too far apart
 		var lerped = lerp(next.global_transform.origin, wantedPos, delta * damping)
 		var clamped = (lerped - prev.global_transform.origin).normalized() * offsets[i].length()
 		var pos = prev.global_transform.origin + clamped
@@ -41,11 +41,9 @@ func _physics_process(delta):
 		var prevRot = prev.global_transform.basis.orthonormalized()
 		
 		# Why?
-		var nextRot = prev.global_transform.looking_at(next.global_transform.origin, Vector3.UP).basis.orthonormalized()
-		
-		
-		# var targetRot = nextRot.slerp(prevRot, angular_damping * delta).orthonormalized()
+		var target_rot = prev.global_transform.looking_at(next.global_transform.origin, prev.global_transform.basis.y).basis.orthonormalized()			
+		# var next_rot = nextRot.slerp(prevRot, angular_damping * delta).orthonormalized()
 		 
-		next.global_transform.basis = nextRot
+		next.global_transform.basis = next.global_transform.basis.slerp(target_rot, angular_damping * delta).orthonormalized()
 		
 

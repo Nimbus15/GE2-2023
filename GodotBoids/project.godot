@@ -9,20 +9,35 @@
 config_version=4
 
 _global_script_classes=[ {
+"base": "Reference",
+"class": "Alignment",
+"language": "GDScript",
+"path": "res://Alignment.gd"
+}, {
 "base": "SteeringBehavior",
 "class": "Arrive",
 "language": "GDScript",
-"path": "res://steering/Arrive.gd"
+"path": "res://Arrive.gd"
 }, {
 "base": "SteeringBehavior",
 "class": "Avoidance",
 "language": "GDScript",
-"path": "res://steering/Avoidance.gd"
+"path": "res://Avoidance.gd"
+}, {
+"base": "KinematicBody",
+"class": "Boid",
+"language": "GDScript",
+"path": "res://Boid.gd"
+}, {
+"base": "SteeringBehavior",
+"class": "Cohesion",
+"language": "GDScript",
+"path": "res://Cohesion.gd"
 }, {
 "base": "SteeringBehavior",
 "class": "Constrain",
 "language": "GDScript",
-"path": "res://steering/Constrain.gd"
+"path": "res://Constrain.gd"
 }, {
 "base": "SteeringBehavior",
 "class": "FollowPath",
@@ -32,22 +47,32 @@ _global_script_classes=[ {
 "base": "SteeringBehavior",
 "class": "Harmonic",
 "language": "GDScript",
-"path": "res://steering/Harmonic.gd"
+"path": "res://Harmonic.gd"
 }, {
 "base": "SteeringBehavior",
 "class": "NoiseWander",
 "language": "GDScript",
-"path": "res://steering/NoiseWander.gd"
+"path": "res://NoiseWander.gd"
 }, {
 "base": "SteeringBehavior",
 "class": "OffsetPursue",
 "language": "GDScript",
-"path": "res://steering/OffsetPursue.gd"
+"path": "res://OffsetPursue.gd"
+}, {
+"base": "Node",
+"class": "School",
+"language": "GDScript",
+"path": "res://School.gd"
 }, {
 "base": "SteeringBehavior",
 "class": "Seek",
 "language": "GDScript",
-"path": "res://steering/Seek.gd"
+"path": "res://Seek.gd"
+}, {
+"base": "Reference",
+"class": "Separation",
+"language": "GDScript",
+"path": "res://Separation.gd"
 }, {
 "base": "Node",
 "class": "SteeringBehavior",
@@ -62,27 +87,32 @@ _global_script_classes=[ {
 "base": "SteeringBehavior",
 "class": "UserSteering",
 "language": "GDScript",
-"path": "res://steering/UserSteering.gd"
+"path": "res://UserSteering.gd"
 }, {
 "base": "Node",
 "class": "Utils",
 "language": "GDScript",
-"path": "res://steering/Utils.gd"
+"path": "res://Utils.gd"
 }, {
 "base": "SteeringBehavior",
 "class": "Wander",
 "language": "GDScript",
-"path": "res://steering/Wander.gd"
+"path": "res://Wander.gd"
 } ]
 _global_script_class_icons={
+"Alignment": "",
 "Arrive": "",
 "Avoidance": "",
+"Boid": "",
+"Cohesion": "",
 "Constrain": "",
 "FollowPath": "",
 "Harmonic": "",
 "NoiseWander": "",
 "OffsetPursue": "",
+"School": "",
 "Seek": "",
+"Separation": "",
 "SteeringBehavior": "",
 "TrailRenderer": "",
 "UserSteering": "",
@@ -93,7 +123,7 @@ _global_script_class_icons={
 [application]
 
 config/name="GodotBoids"
-run/main_scene="res://scenes/AvoidanceKinematic.tscn"
+run/main_scene="res://AvoidanceKinematic.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -102,7 +132,8 @@ DebugDraw="*res://addons/debug_draw_3d/debug_draw.gd"
 
 [display]
 
-window/size/width=800
+window/size/height=768
+window/size/fullscreen=true
 
 [editor_plugins]
 
