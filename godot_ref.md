@@ -1,5 +1,16 @@
 # Unity - Godot API Quick Reference
 
+Keyboard shortcuts
+Ctrl  \
+Ctrl  S
+Ctrl  K
+Ctrl R
+Ctrl F
+Shift Ctrl F
+Ctrl C
+Ctrl V
+Ctrl Shift F11
+
 | Unity  C# | GDScript | Note |
 |----------|------|----|    
 | Random.Range | rand_range() |  In Godot, call randomize() once in your program to set the random seed |

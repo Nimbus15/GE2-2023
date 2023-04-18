@@ -1,9 +1,8 @@
-class_name Harmonic extends SteeringBehavior
+tool class_name Harmonic extends SteeringBehavior
 
 export var frequency = 0.3
 export var radius = 10.0
 
-export var theta = 0
 export var amplitude = 80
 export var distance = 5
 
@@ -11,13 +10,16 @@ enum Axis { Horizontal, Vertical}
 export var axis = Axis.Horizontal
 var target:Vector3
 var worldTarget:Vector3
+
+var theta
 	
 func _ready():
 	boid = get_parent()
-	# theta = rand_range(0, PI * 2.0)
+	theta = rand_range(0, PI * 2.0)
 	
 func _process(delta):
 	if draw_gizmos:
+		boid = get_parent()
 		var cent = boid.global_transform.xform(Vector3.BACK * distance)
 		DebugDraw.draw_sphere(cent, radius, Color.hotpink)
 		DebugDraw.draw_line(boid.global_transform.origin, cent, Color.hotpink)
@@ -29,7 +31,7 @@ func calculate():
 	
 	var delta = get_process_delta_time()
 
-	var rot = boid.transform.basis.get_euler()
+	var rot = boid.global_transform.basis.get_euler()
 	rot.x = 0
 
 	if axis == Axis.Horizontal:

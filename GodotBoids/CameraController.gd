@@ -18,8 +18,16 @@ export var mode = Mode.Free
 
 # Called when the node enters the scene tree for the first time.
 func _ready():
-	camera.move = true
-	pass # Replace with function body.
+	match mode:
+		Mode.Free:
+			camera.move = true
+		Mode.Follow:
+			camera.move = false
+			boid_camera.global_transform.origin = camera.transform.origin
+			call_deferred("calculate_offset")
+
+func calculate_offset():
+	boid_camera.get_node("OffsetPursue").calculate_offset()
 	
 func _input(event):
 	if event is InputEventKey and event.scancode == KEY_C and event.pressed:
@@ -37,17 +45,17 @@ func _input(event):
 		match mode:
 			Mode.Follow, Mode.Free:
 				camera.move = false
-				boid.get_node("MeshInstance").set_visible(false)
+				boid.find_node("MeshInstance").set_visible(false)
 				mode = Mode.Boid
 			Mode.Boid:
-				boid.get_node("MeshInstance").set_visible(true)				
+				boid.find_node("MeshInstance").set_visible(true)				
 				camera.move = true
 				mode = Mode.Free
 						
 func _physics_process(delta):
 	match mode:
 		Mode.Follow:	
-			camera.global_transform.origin = lerp(camera.global_transform.origin, boid_camera.global_transform.origin, delta * 5.0)
+			camera.global_transform.origin = lerp(camera.global_transform.origin, boid_camera.global_transform.origin, delta * 10.0)
 			var desired = camera.global_transform.looking_at(boid.global_transform.origin, Vector3.UP)		
 			camera.global_transform.basis = camera.global_transform.basis.slerp(desired.basis, delta * 2).orthonormalized()
 		Mode.Boid:

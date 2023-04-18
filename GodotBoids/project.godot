@@ -9,7 +9,7 @@
 config_version=4
 
 _global_script_classes=[ {
-"base": "Reference",
+"base": "SteeringBehavior",
 "class": "Alignment",
 "language": "GDScript",
 "path": "res://Alignment.gd"
@@ -18,6 +18,11 @@ _global_script_classes=[ {
 "class": "Arrive",
 "language": "GDScript",
 "path": "res://Arrive.gd"
+}, {
+"base": "State",
+"class": "AttackState",
+"language": "GDScript",
+"path": "res://AttackState.gd"
 }, {
 "base": "SteeringBehavior",
 "class": "Avoidance",
@@ -39,15 +44,40 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Constrain.gd"
 }, {
+"base": "State",
+"class": "DefendState",
+"language": "GDScript",
+"path": "res://DefendState.gd"
+}, {
+"base": "State",
+"class": "DockedState",
+"language": "GDScript",
+"path": "res://DockedState.gd"
+}, {
+"base": "State",
+"class": "FireAtTargetGlobalState",
+"language": "GDScript",
+"path": "res://fire_at_target_global_state.gd"
+}, {
+"base": "SteeringBehavior",
+"class": "Flee",
+"language": "GDScript",
+"path": "res://Flee.gd"
+}, {
 "base": "SteeringBehavior",
 "class": "FollowPath",
 "language": "GDScript",
-"path": "res://PathFollow.gd"
+"path": "res://FollowPath.gd"
 }, {
 "base": "SteeringBehavior",
 "class": "Harmonic",
 "language": "GDScript",
 "path": "res://Harmonic.gd"
+}, {
+"base": "State",
+"class": "LaunchState",
+"language": "GDScript",
+"path": "res://LaunchState.gd"
 }, {
 "base": "SteeringBehavior",
 "class": "NoiseWander",
@@ -59,6 +89,31 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://OffsetPursue.gd"
 }, {
+"base": "SteeringBehavior",
+"class": "PlayerSteering",
+"language": "GDScript",
+"path": "res://PlayerSteering.gd"
+}, {
+"base": "SteeringBehavior",
+"class": "Pursue",
+"language": "GDScript",
+"path": "res://Pursue.gd"
+}, {
+"base": "State",
+"class": "ReadyToLaunch",
+"language": "GDScript",
+"path": "res://ready_to_launch.gd"
+}, {
+"base": "State",
+"class": "RetreatState",
+"language": "GDScript",
+"path": "res://RetreatState.gd"
+}, {
+"base": "State",
+"class": "ReturnToBase",
+"language": "GDScript",
+"path": "res://return_to_base_state.gd"
+}, {
 "base": "Node",
 "class": "School",
 "language": "GDScript",
@@ -69,10 +124,25 @@ _global_script_classes=[ {
 "language": "GDScript",
 "path": "res://Seek.gd"
 }, {
-"base": "Reference",
+"base": "SteeringBehavior",
 "class": "Separation",
 "language": "GDScript",
 "path": "res://Separation.gd"
+}, {
+"base": "Node",
+"class": "SpineAnimator",
+"language": "GDScript",
+"path": "res://SpineAnimator.gd"
+}, {
+"base": "Node",
+"class": "State",
+"language": "GDScript",
+"path": "res://State.gd"
+}, {
+"base": "Node",
+"class": "StateMachine",
+"language": "GDScript",
+"path": "res://StateMachine.gd"
 }, {
 "base": "Node",
 "class": "SteeringBehavior",
@@ -83,11 +153,6 @@ _global_script_classes=[ {
 "class": "TrailRenderer",
 "language": "GDScript",
 "path": "res://TrailRender.gd"
-}, {
-"base": "SteeringBehavior",
-"class": "UserSteering",
-"language": "GDScript",
-"path": "res://UserSteering.gd"
 }, {
 "base": "Node",
 "class": "Utils",
@@ -102,20 +167,33 @@ _global_script_classes=[ {
 _global_script_class_icons={
 "Alignment": "",
 "Arrive": "",
+"AttackState": "",
 "Avoidance": "",
 "Boid": "",
 "Cohesion": "",
 "Constrain": "",
+"DefendState": "",
+"DockedState": "",
+"FireAtTargetGlobalState": "",
+"Flee": "",
 "FollowPath": "",
 "Harmonic": "",
+"LaunchState": "",
 "NoiseWander": "",
 "OffsetPursue": "",
+"PlayerSteering": "",
+"Pursue": "",
+"ReadyToLaunch": "",
+"RetreatState": "",
+"ReturnToBase": "",
 "School": "",
 "Seek": "",
 "Separation": "",
+"SpineAnimator": "",
+"State": "",
+"StateMachine": "",
 "SteeringBehavior": "",
 "TrailRenderer": "",
-"UserSteering": "",
 "Utils": "",
 "Wander": ""
 }
@@ -123,7 +201,7 @@ _global_script_class_icons={
 [application]
 
 config/name="GodotBoids"
-run/main_scene="res://AvoidanceKinematic.tscn"
+run/main_scene="res://StateMachineBots.tscn"
 config/icon="res://icon.png"
 
 [autoload]
@@ -193,6 +271,13 @@ move_down={
 , Object(InputEventJoypadMotion,"resource_local_to_scene":false,"resource_name":"","device":0,"axis":3,"axis_value":1.0,"script":null)
  ]
 }
+
+[layer_names]
+
+3d_physics/layer_1="Attacker"
+3d_physics/layer_2="Base"
+3d_physics/layer_3="Bullets"
+3d_physics/layer_4="Pig"
 
 [mono]
 
