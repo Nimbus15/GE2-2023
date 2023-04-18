@@ -37,7 +37,7 @@ func count_neighbors_partitioned():
 	for slice in [0, -1, 1]:
 		for row in [0, -1, 1]:
 			for col in [0, -1, 1]:
-				var pos = transform.origin + Vector3(col * school.cell_size, row * school.cell_size, slice * school.cell_size)
+				var pos = global_transform.origin + Vector3(col * school.cell_size, row * school.cell_size, slice * school.cell_size)
 				var key = school.position_to_cell(pos)
 				
 				if draw_gizmos:
@@ -51,8 +51,8 @@ func count_neighbors_partitioned():
 					for boid in cell:
 						if draw_gizmos:
 							if boid != self:
-								DebugDraw.draw_box(boid.transform.origin, Vector3(3, 3, 3), Color.darkgoldenrod, true)
-						if boid != self and boid.transform.origin.distance_to(transform.origin) < school.neighbor_distance:
+								DebugDraw.draw_box(boid.global_transform.origin, Vector3(3, 3, 3), Color.darkgoldenrod, true)
+						if boid != self and boid.global_transform.origin.distance_to(global_transform.origin) < school.neighbor_distance:
 							neighbors.push_back(boid)
 							if neighbors.size() == school.max_neighbors:
 								return neighbors.size()					
@@ -60,7 +60,6 @@ func count_neighbors_partitioned():
 	
 func count_neighbors():
 	neighbors.clear()
-	var school = get_parent()
 	for i in school.boids.size():
 		var boid = school.boids[i]
 		if boid != self and global_transform.origin.distance_to(boid.global_transform.origin) < school.neighbor_distance:
@@ -79,28 +78,27 @@ func set_enabled(var behavior, var enabled):
 
 
 func draw_gizmos():
-	DebugDraw.draw_arrow_line(transform.origin,  transform.origin + transform.basis.z * 10.0 , Color(0, 0, 1), 0.1)
-	DebugDraw.draw_arrow_line(transform.origin,  transform.origin + transform.basis.x * 10.0 , Color(1, 0, 0), 0.1)
-	DebugDraw.draw_arrow_line(transform.origin,  transform.origin + transform.basis.y * 10.0 , Color(0, 1, 0), 0.1)
-	DebugDraw.draw_arrow_line(transform.origin,  transform.origin + force , Color(1, 1, 0), 0.1)
+	DebugDraw.draw_arrow_line(global_transform.origin,  global_transform.origin + transform.basis.z * 10.0 , Color(0, 0, 1), 0.1)
+	DebugDraw.draw_arrow_line(global_transform.origin,  global_transform.origin + transform.basis.x * 10.0 , Color(1, 0, 0), 0.1)
+	DebugDraw.draw_arrow_line(global_transform.origin,  global_transform.origin + transform.basis.y * 10.0 , Color(0, 1, 0), 0.1)
+	DebugDraw.draw_arrow_line(global_transform.origin,  global_transform.origin + force, Color(1, 1, 0), 0.1)
 	
-	if count_neighbors:
-		var school = get_parent()
-		DebugDraw.draw_sphere(transform.origin, school.neighbor_distance, Color.webpurple)
+	if school and count_neighbors:
+		DebugDraw.draw_sphere(global_transform.origin, school.neighbor_distance, Color.webpurple)
 		for neighbor in neighbors:
-			DebugDraw.draw_sphere(neighbor.transform.origin, 3, Color.webpurple)
+			DebugDraw.draw_sphere(neighbor.global_transform.origin, 3, Color.webpurple)
 			
 func seek_force(target: Vector3):	
-	var toTarget = target - transform.origin
+	var toTarget = target - global_transform.origin
 	toTarget = toTarget.normalized()
 	var desired = toTarget * max_speed
 	return desired - velocity
 	
 func arrive_force(target:Vector3, slowingDistance:float):
-	var toTarget = target - transform.origin
+	var toTarget = target - global_transform.origin
 	var dist = toTarget.length()
 	
-	if dist == 0:
+	if dist < 2:
 		return Vector3.ZERO
 	
 	var ramped = (dist / slowingDistance) * max_speed
@@ -121,7 +119,7 @@ func _ready():
 			child.set_process(child.enabled) 
 	# enable_all(false)
 	
-func enable_all(enabled):
+func set_enabled_all(enabled):
 	for i in behaviors.size():
 		behaviors[i].enabled = enabled
 		
@@ -155,8 +153,8 @@ func _process(var delta):
 	should_calculate = true
 	if draw_gizmos:
 		draw_gizmos()
-	if count_neighbors:
-		if school and school.partition:
+	if school and count_neighbors:
+		if school.partition:
 			count_neighbors_partitioned()
 		else:
 			count_neighbors()
@@ -179,10 +177,9 @@ func _physics_process(var delta):
 			# Damping
 			velocity -= velocity * delta * damping
 			
-			
 			move_and_slide(velocity)
 			
 			# Implement Banking as described:
 			# https://www.cs.toronto.edu/~dt/siggraph97-course/cwr87/
 			var temp_up = global_transform.basis.y.linear_interpolate(Vector3.UP + (acceleration * banking), delta * 5.0)
-			look_at(global_transform.origin - velocity, temp_up)
+			look_at(global_transform.origin - velocity.normalized(), temp_up)

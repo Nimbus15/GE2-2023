@@ -56,6 +56,8 @@ speed = 30.0
 [node name="Camera Controller" type="Node" parent="Camera"]
 script = ExtResource( 11 )
 boid_camera_path = NodePath("../../camera follower")
+boid_path = NodePath("../../Creature/boid")
+mode = 1
 
 [node name="Listener" type="Listener" parent="Camera"]
 
@@ -70,16 +72,17 @@ script = ExtResource( 3 )
 weight = 5.0
 draw_gizmos = false
 enabled = false
+leader_node_path = NodePath("../../Creature/boid")
 
 [node name="Avoidance" type="Node" parent="camera follower"]
 script = ExtResource( 7 )
 draw_gizmos = false
 
-[node name="Position3D" type="Position3D" parent="."]
+[node name="CreatureTarget" type="Position3D" parent="."]
 transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -90.1317 )
 script = ExtResource( 2 )
 
-[node name="Timer" type="Timer" parent="Position3D"]
+[node name="Timer" type="Timer" parent="CreatureTarget"]
 wait_time = 5.0
 autostart = true
 
@@ -114,7 +117,7 @@ shape = SubResource( 8 )
 
 [node name="Seek" type="Node" parent="Creature/boid"]
 script = ExtResource( 15 )
-target_path = NodePath("../../../Position3D")
+target_path = NodePath("../../../CreatureTarget")
 
 [node name="tail" type="KinematicBody" parent="Creature"]
 
@@ -162,26 +165,36 @@ material/0 = ExtResource( 8 )
 shape = SubResource( 14 )
 
 [node name="Ship" type="KinematicBody" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 42.8709, 0, 0 )
 script = ExtResource( 12 )
 
 [node name="cobramk3" parent="Ship" instance=ExtResource( 1 )]
-transform = Transform( 200, 0, 0, 0, 200, 0, 0, 0, 200, 40.2777, 0, 0 )
+transform = Transform( 200, 0, 0, 0, 200, 0, 0, 0, 200, 0, 0, 0 )
 
 [node name="Seek" type="Node" parent="Ship"]
 script = ExtResource( 15 )
-target_path = NodePath("../../Position3D")
+target_path = NodePath("../../ShipTarget")
 
 [node name="Trail" type="Spatial" parent="Ship"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 40.8431, -0.0753846, -0.904614 )
+transform = Transform( -0.999064, 0.0432532, 0, -0.0432532, -0.999064, 0, 0, 0, 1, 0.55, -0.075, -0.1 )
 script = ExtResource( 4 )
 width_curve = SubResource( 16 )
 
 [node name="Trail2" type="Spatial" parent="Ship"]
-transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 39.7127, -0.075, -0.905 )
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, -0.55, -0.075, -0.1 )
 script = ExtResource( 4 )
 width_curve = SubResource( 17 )
 
 [node name="CollisionShape" type="CollisionShape" parent="Ship"]
 shape = SubResource( 15 )
 
-[connection signal="timeout" from="Position3D/Timer" to="Position3D" method="_on_Timer_timeout"]
+[node name="ShipTarget" type="Position3D" parent="."]
+transform = Transform( 1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -90.1317 )
+script = ExtResource( 2 )
+
+[node name="Timer" type="Timer" parent="ShipTarget"]
+wait_time = 5.0
+autostart = true
+
+[connection signal="timeout" from="CreatureTarget/Timer" to="CreatureTarget" method="_on_Timer_timeout"]
+[connection signal="timeout" from="ShipTarget/Timer" to="ShipTarget" method="_on_Timer_timeout"]

@@ -13,7 +13,6 @@ export var updates_per_second = 5
 var force = Vector3.ZERO
 var feelers = []
 var space_state
-
 var needs_updating = true
 
 func draw_gizmos():
@@ -23,10 +22,9 @@ func draw_gizmos():
 		if feeler.hit:
 			DebugDraw.draw_line(boid.global_transform.origin, feeler.hit_target, Color.chartreuse)
 			DebugDraw.draw_arrow_line(feeler.hit_target, feeler.hit_target + feeler.normal, Color.blue, 0.1)
-			DebugDraw.draw_arrow_line(feeler.hit_target, feeler.hit_target + feeler.force * weight, Color.red, 0.1)
-			
-		# else:
-		#	DebugDraw.draw_line(boid.global_transform.origin, feeler.end, Color.chartreuse)
+			DebugDraw.draw_arrow_line(feeler.hit_target, feeler.hit_target + feeler.force * weight, Color.red, 0.1)			
+		else:
+			DebugDraw.draw_line(boid.global_transform.origin, feeler.end, Color.chartreuse)
 
 func start_updating():
 	
@@ -50,23 +48,23 @@ func _physics_process(var delta):
 func feel(local_ray):
 	var feeler = {}
 	var ray_end = boid.global_transform.xform(local_ray)
-	var result = space_state.intersect_ray(boid.global_transform.origin, ray_end)
+	var result = space_state.intersect_ray(boid.global_transform.origin, ray_end, [boid], boid.collision_mask)
 	feeler.end = ray_end
 	feeler.hit = result
 	if result:
 		feeler.hit_target = result.position
 		feeler.normal = result.normal
 		var to_boid = boid.global_transform.origin - result.position 
-		var force_mag = 0.1
+		var force_mag = ((feeler_length - to_boid.length()) / feeler_length)
 		match direction:
 			ForceDirection.Normal:
 				feeler.force = result.normal * force_mag
 			ForceDirection.Incident:
-				feeler.force = to_boid.reflect(result.normal) * force_mag
+				feeler.force = to_boid.reflect(result.normal).normalized() * force_mag
 			ForceDirection.Up:
 				feeler.force = Vector3.UP * force_mag
 			ForceDirection.Braking:
-				feeler.force = to_boid * force_mag
+				feeler.force = to_boid.normalized() * force_mag
 		force += feeler.force
 	return feeler
 
